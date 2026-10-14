@@ -49,7 +49,7 @@ python inference/compare_models.py --models sql-tuner --data data/test.jsonl --o
 
 adapter 서버에서 동일 test·temperature·max_tokens로 기록한 결과와 비교합니다. 비교 파일의 `sql-tuner` 출력 및 구조 지표를 ID별로 연결하세요. 먼저 eval로 변환 검증을 하고 test는 최종 확인에 사용하세요. 안정적인 배포가 목적이면 검증되지 않은 병합보다 adapter 경로를 우선 사용합니다.
 
-공식 `openai/gpt-oss-120b`는 MXFP4 expert 형식이며 학습에 쓴 Unsloth BnB 4bit 모델과 같지 않습니다. vLLM에서 공식 MXFP4 모델에 학습 어댑터를 바로 붙이는 경로는 모델 revision, adapter key 매핑과 양자화 차이 검증을 거쳐야 하므로 자동 기본 경로로 제공하지 않았습니다. MXFP4 병합/재양자화도 별도 변환 프로젝트로 다뤄야 합니다.
+공식 `openai/gpt-oss-120b`는 MXFP4 expert 형식이며 학습에 쓴 Unsloth BnB 4bit 모델과 같지 않습니다. vLLM에서 공식 MXFP4 모델에 학습 어댑터를 바로 붙이는 경로는 모델 revision, adapter key 매핑과 양자화 차이 검증을 거쳐야 하므로 최초 기본 경로로 제공하지 않았습니다. 이후 사용자가 제공한 기존 vLLM 기동 스크립트를 반영해 별도 serve_vllm_lora.sh를 추가했습니다. VLLM_START.md를 참고하세요. MXFP4 병합/재양자화도 별도 변환 프로젝트로 다뤄야 합니다.
 
 근거로 확인한 upstream 소스(릴리스 지원 증명 대신 구조 확인):
 - https://github.com/unslothai/unsloth/blob/main/unsloth/save.py

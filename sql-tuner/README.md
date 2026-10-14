@@ -128,3 +128,7 @@ xformers 경고는 별도 문제입니다. 현재 로그는 PyTorch attention으
 ## 학습 후 서빙·병합·실제 SQL 평가
 
 [inference/DEPLOYMENT_AND_BENCHMARK.md](inference/DEPLOYMENT_AND_BENCHMARK.md)에 adapter 서버, 선택적 BF16 병합, API 비교와 Oracle/앱 성능 측정 절차를 추가했습니다. 기본은 동일 BnB 베이스 + adapter 서빙입니다.
+
+## 기존 vLLM 기동 방식
+
+첨부 기동 방식을 반영한 [inference/VLLM_START.md](inference/VLLM_START.md)와 serve_vllm_lora.sh, verify_adapter_compat.py를 추가했습니다. 네이티브 MXFP4 + 학습 adapter를 기존 vLLM 환경에서 기동합니다.

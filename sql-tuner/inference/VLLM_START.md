@@ -77,3 +77,7 @@ python inference/compare_models.py \
 기존 기동 경험을 반영해 네이티브 MXFP4에 adapter를 등록합니다. 구조 검사는 shape와 token ID 차이를 찾지만 **BnB 훈련과 MXFP4 추론의 수치적 동등성이나 튜닝 품질을 입증하지 않습니다.** 동일 eval을 BnB+adapter 서버에서도 생성해 비교하면 양자화 전환 영향을 평가할 수 있습니다. vLLM 내부의 fused QKV 매핑 지원 또한 실제 설치 버전에서 추론으로 확인해야 합니다.
 
 현재 클라우드에서는 shell 구문, dry-run 명령 및 shape/token 오류 검출 테스트를 통과했습니다. 모델/adapter 실물과 GPU가 없어 vLLM 로딩 및 SQL 튜닝 품질은 검증하지 않았습니다. 실제 DB 비교 절차는 DEPLOYMENT_AND_BENCHMARK.md를 참고하세요.
+
+## target_modules 검증 수정
+
+기존 검증기는 짧은 모듈 이름 목록만 허용했습니다. PEFT/Unsloth가 전체 경로 목록 또는 정규식을 저장하면 정상 attention LoRA도 거부할 수 있었습니다. 이제 실제 native module에 설정의 PEFT suffix/regex 규칙을 적용하고, 해당 집합과 adapter A/B 텐서 경로를 대조합니다. 비attention 모듈, 없는 모듈, shape 불일치는 계속 거부합니다. 실제 사용자 adapter_config 값은 아직 전달받지 않아 이번 오류의 정확한 저장 형태는 확인되지 않았습니다.

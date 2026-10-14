@@ -23,6 +23,16 @@ class VllmConfigTest(unittest.TestCase):
    result=subprocess.run(['bash',str(Path(__file__).parent/'serve_vllm_lora.sh')],env=env,text=True,capture_output=True)
    self.assertEqual(result.returncode,0,result.stderr);self.assertIn('--served-model-name base-check',result.stdout);self.assertIn('tuned-check=',result.stdout);self.assertNotIn('sherpa-yak',result.stdout)
    self.assertIn('--max-model-len 8192',result.stdout)
+ def test_expanded_and_regex_targets(self):
+  for targets in [['model.layers.0.self_attn.q_proj'],['base_model.model.model.layers.0.self_attn.q_proj'],r'.*\.self_attn\.q_proj']:
+   with self.subTest(targets=targets),tempfile.TemporaryDirectory() as temp:
+    adapter,base=self.fixture(Path(temp));path=adapter/'adapter_config.json';cfg=json.loads(path.read_text());cfg['target_modules']=targets;path.write_text(json.dumps(cfg))
+    self.assertEqual(verify(adapter,base)['lora_module_pairs'],1)
+ def test_forbidden_or_missing_targets(self):
+  for targets in [['gate_proj'],r'.*\.self_attn\.k_proj']:
+   with self.subTest(targets=targets),tempfile.TemporaryDirectory() as temp:
+    adapter,base=self.fixture(Path(temp));path=adapter/'adapter_config.json';cfg=json.loads(path.read_text());cfg['target_modules']=targets;path.write_text(json.dumps(cfg))
+    with self.assertRaises(ValueError):verify(adapter,base)
  def test_shape_and_token_mismatch(self):
   with tempfile.TemporaryDirectory() as temp:
    adapter,base=self.fixture(Path(temp));header(base/'model.safetensors',{'model.layers.0.self_attn.q_proj.weight':[64,16]})

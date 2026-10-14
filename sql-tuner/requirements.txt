@@ -1,0 +1,10 @@
+# GPU runtime installation is unverified in this CPU-only cloud.
+# Resolve Unsloth's compatible stack on the H200, then save pip freeze.
+unsloth
+unsloth_zoo
+transformers>=4.55.4
+peft
+bitsandbytes
+accelerate
+datasets
+sqlglot==27.14.0

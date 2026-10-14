@@ -1,0 +1,120 @@
+{
+  "inventory": [
+    {
+      "file": "oracle_sql_tuning_corrected_all_v4.jsonl",
+      "sha256": "a47cd4154e970e7eee925b7a5d3586c0b0d01921947eda4c0d179abce5f04355",
+      "records": 94
+    },
+    {
+      "file": "oracle_sql_tuning_eval_corrected_v4.jsonl",
+      "sha256": "dc7319b83cff653b2a81bf7379f3a276df60170da76ac85d2c240cd31cb810f6",
+      "records": 9
+    },
+    {
+      "file": "augmented_tuning_dataset_eval.jsonl",
+      "sha256": "2db866f6acfaa645c412a3a6069eeb12d7d200419a5dcda64d6cc3aa6f5a555b",
+      "records": 12
+    },
+    {
+      "file": "augmented_tuning_dataset_test.jsonl",
+      "sha256": "c04df1e02a8c668a3e878eb01528429f74527185c0df20582d61bd5b35405f0b",
+      "records": 14
+    },
+    {
+      "file": "augmented_tuning_dataset_train.jsonl",
+      "sha256": "ed2bb0d04e215fd884031158f2bf1456d3f1a7f489561f490c87af234b526c51",
+      "records": 59
+    },
+    {
+      "file": "augmented_tuning_dataset_train_merged.jsonl",
+      "sha256": "24508f1bfb8c6c0c3ac134d23660de9dd9023517992e1d4c228b4bd7e49193ef",
+      "records": 61
+    },
+    {
+      "file": "augmented_tuning_dataset_train_new.jsonl",
+      "sha256": "1d3fc49b9071f199af86832e674e6e736a9279cd582f463205d6fd13ff1dc172",
+      "records": 10
+    },
+    {
+      "file": "complete_tuning_dataset.jsonl",
+      "sha256": "084f73624adec766b12187945105a39769dabb25cbe9ba13cb87235e2dcc7dee",
+      "records": 21
+    },
+    {
+      "file": "complete_tuning_dataset_final.jsonl",
+      "sha256": "779077b1b1ecf6fa21c364707f3d4c65856d62243b2e3e2bd8f14db425fa6194",
+      "records": 33
+    },
+    {
+      "file": "comprehensive_tuning_data.jsonl",
+      "sha256": "6c64db6ea552027237c64b6441a3381103067c8b23756df45ebfc8ea776e38da",
+      "records": 5
+    },
+    {
+      "file": "comprehensive_tuning_dataset.jsonl",
+      "sha256": "0e089257874102d4a04a169509345c73bf8e39dcd043e41494d0c8dc811a5298",
+      "records": 17
+    },
+    {
+      "file": "final_comprehensive_tuning_dataset.jsonl",
+      "sha256": "c3229bca9c47f4cabf3186d50b2287afd208f065ee6aecdd365abbe661506458",
+      "records": 33
+    },
+    {
+      "file": "final_tuning_dataset.jsonl",
+      "sha256": "d9eb788ff0c734eb7452eb35f00a926a6657ded3412c9ee79c3a1f4801295233",
+      "records": 10
+    },
+    {
+      "file": "oracle_sql_tuning_train_augmented_v4.jsonl",
+      "sha256": "46b07d5ae8ba508e261b3264457feaf16523f5c9390192fdd5be6dd5032467cd",
+      "records": 201
+    }
+  ],
+  "oracle_original_records": 94,
+  "oracle_quarantined": 13,
+  "augmentation_removed": 134,
+  "exact_reconstructed_duplicates_removed": 7,
+  "legacy_records": 275,
+  "legacy_distinct_records": 95,
+  "legacy_matched_to_oracle": 0,
+  "splits": {
+    "train": {
+      "records": 39,
+      "query_families": 4,
+      "categories": {
+        "조건·조인 컬럼에 맞춘 인덱스 설계로 접근 비용 절감": 25,
+        "필터·조인 컬럼 인덱스로 풀 테이블 스캔 제거": 7,
+        "조건절 함수 적용을 제거하거나 함수 기반 인덱스로 접근 경로 개선": 1,
+        "이미 최적화된 DUAL 상수 연산은 원형 유지": 6
+      }
+    },
+    "eval": {
+      "records": 22,
+      "query_families": 2,
+      "categories": {
+        "조건·조인 컬럼에 맞춘 인덱스 설계로 접근 비용 절감": 13,
+        "필터·조인 컬럼 인덱스로 풀 테이블 스캔 제거": 2,
+        "이미 최적화된 DUAL 상수 연산은 원형 유지": 7
+      }
+    },
+    "test": {
+      "records": 13,
+      "query_families": 2,
+      "categories": {
+        "이미 최적화된 DUAL 상수 연산은 원형 유지": 3,
+        "조건·조인 컬럼에 맞춘 인덱스 설계로 접근 비용 절감": 5,
+        "조인 순서와 카디널리티 힌트로 옵티마이저 추정 오류 보정": 1,
+        "필터·조인 컬럼 인덱스로 풀 테이블 스캔 제거": 4
+      }
+    }
+  },
+  "automatic_targets_warning": "Evidence-limited conservative reconstruction, not expert validated tuning labels. Original answers retained separately. Small template diversity; 3-5 hour repetition can overfit.",
+  "augmentation_policy": "Drop case/whitespace-only copies; split by parsed query template with literals replaced, hints removed. Alias-renamed/semantic near duplicates still require manual review.",
+  "review_flags": {
+    "unverified_ddl_hint_or_parameter": 58,
+    "candidate_not_single_parseable_query": 58,
+    "after_plan_verification_not_independently_confirmed": 53,
+    "possible_encoding_corruption": 9
+  }
+}

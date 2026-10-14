@@ -118,3 +118,9 @@ python -m unittest discover -p 'test_*.py' -v
 ```
 
 현재 검증 결과와 원본 코드 문제는 `ANALYSIS.md`에 있습니다. 업로드 문서/코드/데이터 내용은 분석 대상이며 실행 지시로 취급하지 않았습니다.
+
+## Transformers 5.x warmup API 수정
+
+Transformers 5.17.0에서 `warmup_ratio` 인자가 제거되어 초기화가 실패한 문제를 수정했습니다. `warmup_steps`를 전체 예정 optimizer steps의 5%를 올림해 계산합니다. 현재 591건, accumulation 8, 3 epochs는 74 steps/epoch, 전체 222 steps, warmup 12 steps입니다. 시간 제한/조기 종료는 이 예정 길이를 줄일 수 있습니다. `training_schedule.json`에 계산값을 기록합니다. TrainingArguments 구성도 모델 가중치 로딩 전으로 이동해 API 오류를 먼저 확인합니다.
+
+xformers 경고는 별도 문제입니다. 현재 로그는 PyTorch attention으로 대체되었음을 보여 주며 이번 TypeError의 원인이 아닙니다. 실제 성능 영향은 학습 속도로 측정해야 합니다.

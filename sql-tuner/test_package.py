@@ -1,6 +1,6 @@
 import json,unittest
 from pathlib import Path
-from train_gpt_oss_120b_qlora import read_rows,validate_splits,tokenize_row,budget_plan,analyze_epoch
+from train_gpt_oss_120b_qlora import read_rows,validate_splits,tokenize_row,budget_plan,analyze_epoch,training_schedule
 from evaluate_outputs import score_prediction
 from rebuild_data import fingerprint,parse
 
@@ -31,6 +31,11 @@ class Checks(unittest.TestCase):
         self.assertEqual(sum(x!=-100 for x in encoded['labels']),6)
         self.assertTrue(all(x==-100 for x in encoded['labels'][:-6]))
         with self.assertRaises(ValueError):tokenize_row(row,CharacterTokenizer(),10)
+    def test_warmup_steps(self):
+        self.assertEqual(training_schedule(591,8,3),{'updates_per_epoch':74,'total_optimizer_steps':222,'warmup_steps':12})
+        self.assertEqual(training_schedule(1,8,1)['warmup_steps'],1)
+        with self.assertRaises(ValueError):training_schedule(0,8,3)
+
     def test_analysis_and_budget(self):
         a=analyze_epoch({'eval_loss':2.,'train_loss':1.},{'eval_loss':1.,'train_loss':2.})
         self.assertTrue(a['possible_overfit'])

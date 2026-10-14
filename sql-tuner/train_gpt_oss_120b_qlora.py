@@ -47,6 +47,15 @@ def tokenize_row(row,tokenizer,max_length):
     return {'input_ids':ids,'attention_mask':enc.get('attention_mask',[1]*len(ids)),'labels':labels}
 
 
+def training_schedule(samples,grad_accum,epochs,batch_size=1):
+    if min(samples,grad_accum,epochs,batch_size)<=0:
+        raise ValueError('Positive schedule inputs required')
+    updates_per_epoch=math.ceil(math.ceil(samples/batch_size)/grad_accum)
+    total_steps=math.ceil(updates_per_epoch*epochs)
+    return {'updates_per_epoch':updates_per_epoch,'total_optimizer_steps':total_steps,
+            'warmup_steps':math.ceil(total_steps*0.05)}
+
+
 def budget_plan(epoch_seconds,budget_hours,max_epochs):
     if epoch_seconds<=0:raise ValueError('Invalid epoch duration')
     # Reserve 15% for remaining checkpoint I/O and final test; epoch 1 is included.
@@ -99,6 +108,11 @@ def main():
     set_seed(args.seed)
     versions={k:importlib.metadata.version(k) for k in ['torch','transformers','unsloth','peft','bitsandbytes','datasets','accelerate']}
     (out/'run_config.json').write_text(json.dumps({'args':vars(args),'versions':versions,'gpu':props.name,'vram_gib':props.total_memory/2**30},indent=2))
+    # Construct arguments before loading 120B weights: API mismatches fail early.
+    schedule=training_schedule(len(train_rows),args.grad_accum,args.max_epochs)
+    (out/'training_schedule.json').write_text(json.dumps(schedule,indent=2))
+    print('[TRAINING SCHEDULE]',json.dumps(schedule))
+    cfg=TrainingArguments(output_dir=str(out/'checkpoints'),num_train_epochs=args.max_epochs,per_device_train_batch_size=1,per_device_eval_batch_size=1,gradient_accumulation_steps=args.grad_accum,learning_rate=args.learning_rate,warmup_steps=schedule['warmup_steps'],lr_scheduler_type='cosine',optim='adamw_8bit',weight_decay=.01,bf16=True,fp16=False,gradient_checkpointing=True,logging_steps=1,eval_strategy='epoch',save_strategy='epoch',save_total_limit=2,load_best_model_at_end=True,metric_for_best_model='eval_loss',greater_is_better=False,prediction_loss_only=True,report_to='none',seed=args.seed,data_seed=args.seed,dataloader_num_workers=0)
     model,tokenizer=FastLanguageModel.from_pretrained(model_name=args.model,max_seq_length=args.max_seq_length,dtype=torch.bfloat16,load_in_4bit=True,full_finetuning=False)
     if not tokenizer.is_fast:raise RuntimeError('A fast tokenizer with offset mapping is required for assistant-only masking')
     if tokenizer.pad_token_id is None:tokenizer.pad_token=tokenizer.eos_token
@@ -162,7 +176,6 @@ def main():
             if (state.epoch or 0)>=self.target_epochs:control.should_training_stop=True
 
     callback=EpochReport()
-    cfg=TrainingArguments(output_dir=str(out/'checkpoints'),num_train_epochs=args.max_epochs,per_device_train_batch_size=1,per_device_eval_batch_size=1,gradient_accumulation_steps=args.grad_accum,learning_rate=args.learning_rate,warmup_ratio=.05,lr_scheduler_type='cosine',optim='adamw_8bit',weight_decay=.01,bf16=True,fp16=False,gradient_checkpointing=True,logging_steps=1,eval_strategy='epoch',save_strategy='epoch',save_total_limit=2,load_best_model_at_end=True,metric_for_best_model='eval_loss',greater_is_better=False,prediction_loss_only=True,report_to='none',seed=args.seed,data_seed=args.seed,dataloader_num_workers=0)
     trainer=Trainer(model=model,args=cfg,train_dataset=datasets['train'],eval_dataset=datasets['eval'],data_collator=collate,processing_class=tokenizer,callbacks=[callback,EarlyStoppingCallback(early_stopping_patience=1,early_stopping_threshold=.001)])
     # Baseline BEFORE updates enables measuring actual loss improvement.
     baseline=trainer.evaluate(metric_key_prefix='baseline')

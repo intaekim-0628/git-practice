@@ -1,0 +1,3 @@
+# Install in the already working training venv.
+fastapi
+uvicorn

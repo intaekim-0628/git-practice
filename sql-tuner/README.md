@@ -124,3 +124,7 @@ python -m unittest discover -p 'test_*.py' -v
 Transformers 5.17.0에서 `warmup_ratio` 인자가 제거되어 초기화가 실패한 문제를 수정했습니다. `warmup_steps`를 전체 예정 optimizer steps의 5%를 올림해 계산합니다. 현재 591건, accumulation 8, 3 epochs는 74 steps/epoch, 전체 222 steps, warmup 12 steps입니다. 시간 제한/조기 종료는 이 예정 길이를 줄일 수 있습니다. `training_schedule.json`에 계산값을 기록합니다. TrainingArguments 구성도 모델 가중치 로딩 전으로 이동해 API 오류를 먼저 확인합니다.
 
 xformers 경고는 별도 문제입니다. 현재 로그는 PyTorch attention으로 대체되었음을 보여 주며 이번 TypeError의 원인이 아닙니다. 실제 성능 영향은 학습 속도로 측정해야 합니다.
+
+## 학습 후 서빙·병합·실제 SQL 평가
+
+[inference/DEPLOYMENT_AND_BENCHMARK.md](inference/DEPLOYMENT_AND_BENCHMARK.md)에 adapter 서버, 선택적 BF16 병합, API 비교와 Oracle/앱 성능 측정 절차를 추가했습니다. 기본은 동일 BnB 베이스 + adapter 서빙입니다.

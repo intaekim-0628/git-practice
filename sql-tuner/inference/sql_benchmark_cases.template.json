@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "case_id": "replace_with_app_query_id",
+      "original_sql": null,
+      "candidate_sql": null,
+      "binds": {},
+      "bind_types": {},
+      "metadata_snapshot": null,
+      "observed_cursor_plan": null,
+      "candidate_reviewed": false,
+      "warmup_runs_per_variant": 2,
+      "measured_runs_per_variant": 20,
+      "execution_order": "ABBA",
+      "fetch_policy": "fetch_all",
+      "result_comparison": "multiset_unless_order_by",
+      "results": {
+        "equivalent": null,
+        "original_median_ms": null,
+        "candidate_median_ms": null,
+        "original_p95_ms": null,
+        "candidate_p95_ms": null,
+        "original_buffer_gets": null,
+        "candidate_buffer_gets": null,
+        "original_physical_reads": null,
+        "candidate_physical_reads": null
+      }
+    }
+  ]
+}
